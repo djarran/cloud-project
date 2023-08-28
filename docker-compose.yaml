@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  db:
+    image: "postgres"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cloud
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    networks:
+      - postgres
+  api:
+    env_file:
+      - ./server/.env
+    build:
+      dockerfile: Dockerfile.dev
+      context: "./server"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - PGHOST=db
+      - PGDATABASE=cloud
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGPORT=5432
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    networks:
+      - postgres
+  react:
+    build:
+      dockerfile: Dockerfile.dev
+      context: "./client"
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    command: npm run dev
+networks:
+  postgres:
+    driver: bridge
