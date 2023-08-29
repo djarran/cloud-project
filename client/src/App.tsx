@@ -1,28 +1,31 @@
-import { useState } from "react";
-import "./App.css";
+import { ChangeEvent, useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0);
+
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    // Add your submit logic here
+    console.log("Submitted!");
+    console.log(inputValue);
+  };
 
   return (
-    <>
-      <div>
-        <div className="text-orange-500">hello</div>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="flex flex-row gap-4">
+      <input
+        type="text"
+        className="border p-4 outline-none rounded-xl"
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
   );
+
 }
 
 export default App;
