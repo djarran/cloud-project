@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 export async function getAccessToken() {
     const clientId = process.env.REDDIT_CLIENT_ID as string;
     const clientSecret = process.env.REDDIT_CLIENT_SECRET as string;
