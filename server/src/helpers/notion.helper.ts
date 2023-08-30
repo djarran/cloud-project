@@ -2,6 +2,7 @@ import { CreatePageResponse, PageObjectResponse } from "@notionhq/client/build/s
 import { UserInput } from "../routes/add.routes.ts";
 import { notion } from "../utilities/notionClient.ts";
 import { getYouTubeVideoData } from "./youtube.helper.ts";
+import { RedditObject } from "../types/redditType.ts";
 
 export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<typeof getYouTubeVideoData>>, userInput: UserInput) => {
 
@@ -100,10 +101,101 @@ export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<ty
                 url: notionCreatePageResponse.url
             }
         }
+
         throw new Error("Unable to create Notion page")
     }
 
 
+    catch (err) {
+        return {
+            status: 'error'
+        }
+    }
+}
+
+export const updateRedditDatabase = async (redditObject: RedditObject, userInput: UserInput) => {
+    try {
+        if (!redditObject) {
+            throw new Error("Reddit data object missing or empty")
+        }
+
+        const { typeData, postType } = redditObject;
+        const { status, reason } = userInput
+
+        const notionCreatePageResponse = await notion.pages.create({
+            parent: {
+                database_id: "14b70f9d-2791-488e-9332-e4c69f4ba99e"
+            },
+            properties: {
+                "Title": {
+                    title: [
+                        {
+                            text: {
+                                content: typeData.title
+                            }
+                        }
+                    ]
+                },
+                "Reason": {
+                    rich_text: [
+                        {
+                            text: {
+                                content: reason
+                            }
+                        }
+                    ]
+                },
+                "Subreddit": {
+                    rich_text: [
+                        {
+                            text: {
+                                content: typeData.subreddit ?? ''
+                            }
+                        }
+                    ]
+                },
+                "Link": {
+                    rich_text: [
+                        {
+                            text: {
+                                content: typeData.post_url
+                            }
+                        }
+                    ]
+                },
+                "Date": {
+                    date: {
+                        "start": `${new Date().toISOString()}`,
+                        "time_zone": "Australia/Brisbane"
+                    }
+                },
+                "Read Status": {
+                    select: {
+                        name: capitalizeFirstLetter(status) || ''
+                    }
+                }
+            },
+            // children: [
+            //     {
+            //         object: "block",
+            //         video: {
+            //             external: {
+            //                 url: url
+            //             }
+            //         }
+            //     }
+            // ]
+        }) as PageObjectResponse
+
+        if (notionCreatePageResponse.object === 'page') {
+            return {
+                status: 'success',
+                url: notionCreatePageResponse.url
+            }
+        }
+        console.log(notionCreatePageResponse)
+        throw new Error("Unable to create Notion page")
+    }
     catch (err) {
         return {
             status: 'error'

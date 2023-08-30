@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
 import { getYouTubeVideoData } from "../helpers/youtube.helper.ts";
 import { getRedditPostData } from "../helpers/reddit.helper.ts";
-import { updateYouTubeDatabase } from "../helpers/notion.helper.ts";
+import { updateRedditDatabase, updateYouTubeDatabase } from "../helpers/notion.helper.ts";
+import { RedditObject } from "../types/redditType.ts";
 
 
 const router = Router();
@@ -29,9 +30,11 @@ export type UserInput = {
 
 type AwaitedYouTubeData = Awaited<YouTubeResponseObject>;
 
+type AddToNotion = { type: 'youtube', data: AwaitedYouTubeData, userInput: UserInput } | { type: 'reddit', data: RedditObject, userInput: UserInput }
+
 router.post('/notion', async (req: Request, res: Response) => {
     // console.log(req.body)
-    const { type, data, userInput }: { type: string, data: AwaitedYouTubeData, userInput: UserInput } = req.body;
+    const { type, data, userInput }: AddToNotion = req.body;
     console.log({ type, data, userInput })
 
     if (!type || !data) {
@@ -40,6 +43,16 @@ router.post('/notion', async (req: Request, res: Response) => {
 
     if (type === 'youtube') {
         const { status, url } = await updateYouTubeDatabase(data, userInput)
+
+        if (status === 'success') {
+            return res.status(200).send("Success")
+        } else {
+            return res.status(400).send("Error")
+        }
+    }
+
+    if (type === 'reddit') {
+        const { status, url } = await updateRedditDatabase(data, userInput)
 
         if (status === 'success') {
             return res.status(200).send("Success")

@@ -121,7 +121,54 @@ const DataResponse = ({ response }: DataResponseType) => {
 
   if (type === 'reddit') {
     if (data.postType === 'text') {
-      // data.typeData.
+      return (
+        <div>
+          <div>{data.typeData.title}</div>
+          <div>{data.postType}</div>
+          <div>r/{data.typeData.subreddit}</div>
+          <div>{data.typeData.selftext}</div>
+          <div>{data.typeData.post_url}</div>
+          <UserInputComponent type={type} selectState={selectState} handleOptionChange={handleOptionChange} text={text} handleTextChange={handleTextChange} handleSubmit={handleSubmit} />
+        </div>
+      )
+    }
+
+    if (data.postType === 'external') {
+      return (
+        <div>
+          <div>{data.typeData.title}</div>
+          <div>{data.postType}</div>
+          <div>r/{data.typeData.subreddit}</div>
+          <div>{data.typeData.externalLink}</div>
+          <div>{data.typeData.post_url}</div>
+          <UserInputComponent type={type} selectState={selectState} handleOptionChange={handleOptionChange} text={text} handleTextChange={handleTextChange} handleSubmit={handleSubmit} />
+        </div>
+      )
+    }
+
+    if (data.postType === 'image') {
+      return (
+        <div>
+          <div>{data.typeData.title}</div>
+          <div>{data.postType}</div>
+          <div>r/{data.typeData.subreddit}</div>
+          <img src={data.typeData.imageLink} />
+          <div>{data.typeData.post_url}</div>
+          <UserInputComponent type={type} selectState={selectState} handleOptionChange={handleOptionChange} text={text} handleTextChange={handleTextChange} handleSubmit={handleSubmit} />
+        </div>
+      )
+    }
+    if (data.postType === 'galleryImage') {
+      return (
+        <div>
+          <div>{data.typeData.title}</div>
+          <div>{data.postType}</div>
+          <div>r/{data.typeData.subreddit}</div>
+          <img src={data.typeData.mediaArray[0]} />
+          <div>{data.typeData.post_url}</div>
+          <UserInputComponent type={type} selectState={selectState} handleOptionChange={handleOptionChange} text={text} handleTextChange={handleTextChange} handleSubmit={handleSubmit} />
+        </div>
+      )
     }
   }
 
@@ -131,30 +178,56 @@ const DataResponse = ({ response }: DataResponseType) => {
         <img src={data.image} />
         <h1>{data.title}</h1>
         <div>{data.channelName}</div>
-        <div className="flex flex-row gap-4">
-          <div>Watch Status</div>
-          <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5" value={selectState} onChange={handleOptionChange} placeholder="Select status...">
-            <option value="" disabled selected hidden>
-              Select status...
-            </option>
-            <option value="watched">Watched</option>
-            <option value="unwatched">Unwatched</option>
-          </select>
-        </div>
-        <div>
-          <h1>
-            Why are you saving this video?
-          </h1>
-          <textarea className="border rounded-xl p-4 outline-none" value={text} onChange={handleTextChange} rows={4} cols={50}></textarea>
-        </div>
-        <div className="flex flex-row gap-4">
-          <button className="p-2 rounded-xl border" onClick={handleSubmit}>Add to Notion</button>
-          <button className="p-2 rounded-xl border">Cancel</button>
-        </div>
+        <UserInputComponent type={type} selectState={selectState} handleOptionChange={handleOptionChange} text={text} handleTextChange={handleTextChange} handleSubmit={handleSubmit} />
       </div>
     )
   }
+}
 
+type UserInputComponentType = {
+  type: 'reddit' | 'youtube'
+  selectState: statusString,
+  handleOptionChange: (event: ChangeEvent<HTMLSelectElement>) => void,
+  text: string,
+  handleTextChange: (event: ChangeEvent<HTMLTextAreaElement>) => void,
+  handleSubmit: () => void
+}
+
+const UserInputComponent = ({ type, selectState, handleOptionChange, text, handleTextChange, handleSubmit }: UserInputComponentType) => {
+  return (
+    <>
+      <div className="flex flex-row gap-4">
+        <div>Watch Status</div>
+        <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5" value={selectState} onChange={handleOptionChange} placeholder="Select status...">
+          <option value="" disabled selected hidden>
+            Select status...
+          </option>
+          {type === 'youtube' && (
+            <>
+              <option value="watched">Watched</option>
+              <option value="unwatched">Unwatched</option>
+            </>
+          )}
+          {type === 'reddit' && (
+            <>
+              <option value="read">Read</option>
+              <option value="unread">Unread</option>
+            </>
+          )}
+        </select>
+      </div>
+      <div>
+        <h1>
+          Why are you saving this video?
+        </h1>
+        <textarea className="border rounded-xl p-4 outline-none" value={text} onChange={handleTextChange} rows={4} cols={50}></textarea>
+      </div>
+      <div className="flex flex-row gap-4">
+        <button className="p-2 rounded-xl border" onClick={handleSubmit}>Add to Notion</button>
+        <button className="p-2 rounded-xl border">Cancel</button>
+      </div>
+    </>
+  )
 }
 
 export default App;
