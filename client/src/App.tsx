@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { getMetadata } from "./helpers/postUrl";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { RedditObject } from "./helpers/redditType";
 
 function App() {
 
@@ -50,11 +51,17 @@ type YouTubeObject = {
   url: string;
 }
 
+// type RedditObject = {
+//   typeData: RedditTypeObject,
+// }
+
 type DataResponseType = {
   response: {
-
-    type: "reddit" | "youtube",
+    type: "youtube",
     data: YouTubeObject
+  } | {
+    type: "reddit",
+    data: RedditObject
   }
 }
 
@@ -64,8 +71,11 @@ export type UserInput = {
   reason: string
 }
 
+
+
 const DataResponse = ({ response }: DataResponseType) => {
   const { data, type } = response
+  console.log(data)
 
   const [selectState, setSelectState] = useState<statusString>('')
 
@@ -79,7 +89,7 @@ const DataResponse = ({ response }: DataResponseType) => {
     setSelectState(event.target.value as statusString)
   }
 
-  type MutationType = { userInput: UserInput, type: "reddit" | "youtube", data: YouTubeObject }
+  type MutationType = { userInput: UserInput, type: "reddit" | "youtube", data: YouTubeObject | RedditObject }
 
   const { mutate } = useMutation({
     mutationFn: ({ userInput, type, data }: MutationType) => {
@@ -106,6 +116,13 @@ const DataResponse = ({ response }: DataResponseType) => {
       type,
       data
     })
+  }
+
+
+  if (type === 'reddit') {
+    if (data.postType === 'text') {
+      // data.typeData.
+    }
   }
 
   if (type === 'youtube') {

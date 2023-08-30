@@ -36,6 +36,41 @@ export async function getAccessToken() {
     }
 }
 
+type RedditObject = TextType | CommentType | ExternalType | ImageType | GalleryImageType
+
+type TextType = {
+    title: string,
+    post_type: string,
+    selftext: string,
+    subreddit: string,
+    selftext_html: string,
+    post_url: string,
+}
+
+type CommentType = {
+    title: string,
+    post_type: string,
+    body: string,
+    subreddit: string,
+    post_url: string
+}
+
+type ExternalType = {
+    title: string,
+    post_type: string,
+    post_url: string,
+    subreddit: string,
+    externalLink: string,
+}
+
+type ImageType = {
+    title: string, post_type: string, post_url: string, imageLink: string, subreddit: string
+}
+
+type GalleryImageType = {
+    title: string, post_type: string, post_url: string, mediaArray: string[], subreddit: string
+}
+
 export const processRedditPost = (redditPostData: any) => {
     let {
         title,
@@ -52,9 +87,10 @@ export const processRedditPost = (redditPostData: any) => {
         created,
     } = redditPostData;
 
-    let post_type,
-        returnObject: any = "";
+    let post_type = ""
+    let returnObject: RedditObject = {} as RedditObject;
     let post_url = redditPostData.url;
+
 
     // Check if post is a comment
     if (body) {
@@ -117,7 +153,7 @@ export const processRedditPost = (redditPostData: any) => {
         returnObject = { title, post_type, post_url, mediaArray, subreddit };
     }
 
-    return { typeData: returnObject, postDate: created };
+    return { typeData: returnObject, postType: post_type };
 };
 
 const processRedditUrl = (url: string) => {
@@ -134,23 +170,24 @@ const processRedditUrl = (url: string) => {
 
 export async function getRedditPostData(url: string) {
 
+    const accessToken = await getAccessToken()
+
     const queryUrl = processRedditUrl(url)
     const options = {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${process.env.REDDIT_BEARER_TOKEN}`
+            'Authorization': `Bearer ${accessToken}`
         },
     };
 
     try {
         const response: any = await fetch(queryUrl, options);
         if (!response.ok) {
-            throw new Error('Failed to get access token');
+            throw new Error('Failed to get Reddit post data');
         }
         const data: any = await response.json();
-        // console.log(data[0].data.children[0].data)
-        // console.log(processRedditPost(data[0].data.children[0].data))
         const postRawData = data[0].data.children[0].data
+
         return processRedditPost(postRawData);
     } catch (error) {
         console.error(error);

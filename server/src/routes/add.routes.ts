@@ -57,7 +57,7 @@ const getMetadata = async (url: string) => {
         try {
 
             const youtubeData = await getYouTubeVideoData(url)
-            throw new Error("Shit's fucked")
+            // throw new Error("Shit's fucked")
             return {
                 type: "youtube",
                 data: youtubeData
@@ -69,10 +69,16 @@ const getMetadata = async (url: string) => {
     }
 
     if (url.includes('reddit')) {
-        const redditData = await getRedditPostData(url)
-        return {
-            type: "reddit",
-            data: redditData
+        try {
+            const redditData = await getRedditPostData(url)
+            console.log(redditData)
+            return {
+                type: "reddit",
+                data: redditData
+            }
+        }
+        catch {
+            throw new Error("Error with Reddit API")
         }
     }
 
