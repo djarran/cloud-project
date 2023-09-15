@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   db:
+    platform: linux/amd64
     build:
       dockerfile: Dockerfile.postgres
       context: "./"
@@ -15,6 +16,7 @@ services:
     networks:
       - postgres
   api:
+    platform: linux/amd64
     env_file:
       - ./server/.env
     build:
@@ -36,6 +38,7 @@ services:
     networks:
       - postgres
   react:
+    platform: linux/amd64
     build:
       dockerfile: Dockerfile.dev
       context: "./client"
