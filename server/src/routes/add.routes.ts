@@ -3,16 +3,18 @@ import { getYouTubeVideoData } from "../helpers/youtube.helper.ts";
 import { getRedditPostData } from "../helpers/reddit.helper.ts";
 import { updateRedditDatabase, updateYouTubeDatabase } from "../helpers/notion.helper.ts";
 import { RedditObject } from "../types/redditType.ts";
+import { createTableIfNotExists, updateCounter } from "../helpers/database.helper.ts";
 
 
 const router = Router();
 
 router.get('/metadata', async (req: Request, res: Response) => {
-    // console.log(req.body)
+    // TODO: PAGE COUNTER
+    createTableIfNotExists();
+    const currentCount = updateCounter();
     const { url } = req.query;
     console.log(url)
     try {
-
         const type = await getMetadata(url as string)
         res.status(200).json(type)
     }
@@ -45,7 +47,9 @@ router.post('/notion', async (req: Request, res: Response) => {
         const { status, url } = await updateYouTubeDatabase(data, userInput)
 
         if (status === 'success') {
-            return res.status(200).send("Success")
+            return res.status(200).json({
+                url: url
+            })
         } else {
             return res.status(400).send("Error")
         }
@@ -55,7 +59,9 @@ router.post('/notion', async (req: Request, res: Response) => {
         const { status, url } = await updateRedditDatabase(data, userInput)
 
         if (status === 'success') {
-            return res.status(200).send("Success")
+            return res.status(200).json({
+                url: url
+            })
         } else {
             return res.status(400).send("Error")
         }

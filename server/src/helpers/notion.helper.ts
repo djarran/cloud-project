@@ -1,8 +1,100 @@
-import { CreatePageResponse, PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { AppendBlockChildrenParameters, BlockObjectRequest, CreatePageResponse, PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import { UserInput } from "../routes/add.routes.ts";
 import { notion } from "../utilities/notionClient.ts";
 import { getYouTubeVideoData } from "./youtube.helper.ts";
 import { RedditObject } from "../types/redditType.ts";
+import 'dotenv/config'
+import { text } from "express";
+
+
+const getChildren = (redditObject: RedditObject): BlockObjectRequest[] => {
+    const { typeData, postType } = redditObject;
+
+
+
+    if (postType === 'image') {
+        return [
+            {
+                object: "block",
+                toggle: {
+                    rich_text: [
+                        {
+                            text: {
+                                content: 'Image'
+                            }
+                        }
+                    ],
+                    children: [
+                        {
+                            object: "block",
+                            image: {
+                                external: {
+                                    url: typeData.imageLink
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+    if (postType === 'galleryImage') {
+        return [
+            {
+                object: "block",
+                toggle: {
+                    rich_text: [
+                        {
+                            text: {
+                                content: 'Image'
+                            }
+                        }
+                    ],
+                    children: [
+                        {
+                            object: "block",
+                            image: {
+                                external: {
+                                    url: typeData.mediaArray[0]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+    return [
+        {
+            object: "block",
+            toggle: {
+                rich_text: [
+                    {
+                        text: {
+                            content: 'Post text'
+                        }
+                    }
+                ],
+                children: [
+                    {
+                        object: "block",
+                        paragraph: {
+                            rich_text: [
+                                {
+                                    text: {
+                                        content: postType === 'text' ? typeData.selftext : ''
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                ]
+            }
+        }
+    ]
+}
 
 export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<typeof getYouTubeVideoData>>, userInput: UserInput) => {
 
@@ -17,7 +109,7 @@ export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<ty
 
         const notionCreatePageResponse = await notion.pages.create({
             parent: {
-                database_id: "0e6182e1-5116-445a-bcf0-a066ae1de1a8"
+                database_id: process.env.NOTION_YOUTUBE_DB as string
             },
             cover: {
                 type: "external",
@@ -94,7 +186,7 @@ export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<ty
                 }
             ]
         }) as PageObjectResponse
-
+        console.log(notionCreatePageResponse)
         if (notionCreatePageResponse.object === 'page') {
             return {
                 status: 'success',
@@ -120,11 +212,14 @@ export const updateRedditDatabase = async (redditObject: RedditObject, userInput
         }
 
         const { typeData, postType } = redditObject;
+        const childrenObject = getChildren(redditObject)
         const { status, reason } = userInput
+
+        // if (postType === 'text')
 
         const notionCreatePageResponse = await notion.pages.create({
             parent: {
-                database_id: "14b70f9d-2791-488e-9332-e4c69f4ba99e"
+                database_id: process.env.NOTION_REDDIT_DB as string
             },
             properties: {
                 "Title": {
@@ -173,18 +268,15 @@ export const updateRedditDatabase = async (redditObject: RedditObject, userInput
                     select: {
                         name: capitalizeFirstLetter(status) || ''
                     }
+                },
+                "Post Type": {
+                    select: {
+                        name: postType === 'galleryImage' ? 'Image' : capitalizeFirstLetter(postType)
+                    }
                 }
             },
-            // children: [
-            //     {
-            //         object: "block",
-            //         video: {
-            //             external: {
-            //                 url: url
-            //             }
-            //         }
-            //     }
-            // ]
+            children: childrenObject
+
         }) as PageObjectResponse
 
         if (notionCreatePageResponse.object === 'page') {
@@ -203,8 +295,43 @@ export const updateRedditDatabase = async (redditObject: RedditObject, userInput
     }
 }
 
+export const getRandomYouTubeVideo = async () => {
+    const response = await notion.databases.query({
+        database_id: process.env.NOTION_YOUTUBE_DB as string,
+    })
+
+
+    const randomNumber = getRandomNumber(0, response.results.length - 1)
+    console.log(randomNumber)
+
+    const exampleResult = response.results[randomNumber] as any
+
+    const url = exampleResult.properties.Link.rich_text[0].text.content
+    console.log(url)
+
+    return url
+
+}
+
 function capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// function getRandomNumber(min: number, max: number): number {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
+
+function getRandomNumber(min: number, max: number): number {
+    const length = max - min + 1;
+    const numbers = Array.from({ length }, (_, i) => i + min);
+
+    for (let i = length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+
+    return numbers[0];
+}
+
 
 

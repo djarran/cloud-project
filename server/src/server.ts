@@ -1,10 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import { router } from "./routes/routes.ts";
 import 'dotenv/config'
-
 import cors from 'cors'
-
-console.log(process.env)
+import { CronJob } from "cron";
+import { createMessage } from "./helpers/discord.helper.ts";
 
 const app: Express = express();
 const port: number = 4000;
@@ -18,4 +17,17 @@ app.listen(port, () => {
 });
 
 app.use('/', router)
+
+// schedule('10 * * * * *', () => {
+//   console.log('wow')
+// })
+// 
+const wow = new CronJob(
+  `* * * * * *`,
+  async function () {
+    await createMessage('hey')
+  }
+)
+// wow.start()
+
 

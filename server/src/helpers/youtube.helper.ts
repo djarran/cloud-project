@@ -18,7 +18,9 @@ export const getYouTubeVideoData = async (url: string) => {
 
     try {
         const response = await fetch(endpoint);
+        // console.log(response)
         if (!response.ok) {
+            console.log("error")
             throw new Error(`Failed to fetch YouTube video: ${response.status} ${response.statusText}`);
         }
         const data: any = await response.json();
