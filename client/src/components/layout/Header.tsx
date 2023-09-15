@@ -1,7 +1,7 @@
 
 export const Header = ({ data }: { data: any }) => {
 
-
+    console.log(import.meta.env.VITE_TEST)
     return (
         <div className="flex items-center flex-row justify-between gap-4 border-b py-4 pl-4">
             <div className="flex flex-row gap-4">

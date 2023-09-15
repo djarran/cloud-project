@@ -9,7 +9,7 @@ type MetadataQueryObject = {
 export const getMetadata = async ({ queryKey }: MetadataQueryObject) => {
     const [_, url] = queryKey;
     const toastId = toast.loading("Requesting metadata...")
-    const response = await fetch(`http://localhost:3001/add/metadata?url=${url}`)
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/add/metadata?url=${url}`)
     if (!response.ok) {
         toast.error("Unable to process request", {
             id: toastId,
@@ -33,7 +33,7 @@ export const getMetadata = async ({ queryKey }: MetadataQueryObject) => {
 
 export const getCounter = async () => {
 
-    const response = await fetch(`http://localhost:3001/counter`)
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/counter`)
     console.log(response)
     const data = await response.json();
 

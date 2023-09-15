@@ -32,7 +32,7 @@ export const UserInput = ({ response }: DataResponseType) => {
     const { mutate, isSuccess } = useMutation({
         mutationFn: ({ userInput, type, data }: MutationType) => {
             const toastId = toast.loading("Creating Notion page...")
-            return fetch('http://localhost:3001/add/notion', {
+            return fetch(`${import.meta.env.VITE_API_URL}/add/notion`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
