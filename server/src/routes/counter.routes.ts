@@ -8,7 +8,7 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
     const currentCounter = await getCurrentCounter();
-    await createMessage('Hey');
+    // await createMessage('Hey');
     // await getRandomYouTubeVideo();
 
     console.log(currentCounter)
