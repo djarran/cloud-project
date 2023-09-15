@@ -5,6 +5,7 @@ COPY ./package-lock.json ./
 RUN npm ci
 RUN chown -R node.node /app
 COPY . .
+RUN chmod 777 node_modules
 EXPOSE 3000
 CMD ["npm", "run", "build"]
 CMD ["npm", "run", "preview"]
