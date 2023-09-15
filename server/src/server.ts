@@ -6,7 +6,7 @@ import { CronJob } from "cron";
 import { createMessage } from "./helpers/discord.helper.ts";
 
 const app: Express = express();
-const port: number = 4000;
+const port: number = 3001;
 
 app.use(cors())
 app.use(express.json()); // Read json encoded body data
