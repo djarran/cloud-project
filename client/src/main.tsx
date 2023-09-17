@@ -8,10 +8,8 @@ import { Toaster } from 'react-hot-toast';
 export const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <div><Toaster position='top-right' /></div>
-      <App />
-    </QueryClientProvider>
-  </React.StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <div><Toaster position='top-right' /></div>
+    <App />
+  </QueryClientProvider>
 )
