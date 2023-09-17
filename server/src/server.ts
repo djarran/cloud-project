@@ -29,6 +29,6 @@ const postToDiscord = new CronJob(
     await createMessage('hey')
   }
 )
-// postToDiscord.start()
+postToDiscord.start()
 
 
