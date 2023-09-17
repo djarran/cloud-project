@@ -6,6 +6,7 @@ import { YouTube, YouTubeObject } from "./YouTube";
 import { RedditObject } from "../helpers/redditType";
 import { Reddit } from "./Reddit";
 import { UserInput } from "./UserInput";
+import Home from "./Home";
 
 export const Main = ({ refetchCounter }: { refetchCounter: any }) => {
 
@@ -35,24 +36,7 @@ export const Main = ({ refetchCounter }: { refetchCounter: any }) => {
     return (
         <>
             <div className="flex flex-col gap-4 w-full items-center mt-10">
-                {!data && (
-                    <div className="flex flex-col gap-2">
-                        <p className="pl-1 font-bold">
-                            Enter YouTube or Reddit URL
-                        </p>
-                        <div className="flex flex-row gap-4">
-
-                            <input
-                                type="text"
-                                className="border p-4 outline-none rounded-xl"
-                                value={url}
-                                placeholder="https://"
-                                onChange={handleInputChange}
-                            />
-                            <button onClick={handleSubmit} className="bg-black text-white rounded-xl border px-2 hover:bg-neutral-600 transition-colors">Submit</button>
-                        </div>
-                    </div>
-                )}
+                {!data && <Home url={url} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />}
                 {data ? <DataResponse response={data} /> : ''}
             </div>
         </>

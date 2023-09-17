@@ -40,8 +40,10 @@ export const UserInput = ({ response }: DataResponseType) => {
                 body: JSON.stringify({ userInput, type, data }),
             }).then(response => {
                 if (!response.ok) {
-                    toast.error("Unable to add to Notion", {
-                        id: toastId
+                    const data = response.json().then(data => {
+                        toast.error(`Unable to add to Notion. ${data.message}.`, {
+                            id: toastId
+                        })
                     })
                     throw Error
                 } else {

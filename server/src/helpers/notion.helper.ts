@@ -186,7 +186,7 @@ export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<ty
                 }
             ]
         }) as PageObjectResponse
-        console.log(notionCreatePageResponse)
+        // console.log(notionCreatePageResponse)
         if (notionCreatePageResponse.object === 'page') {
             return {
                 status: 'success',
@@ -198,9 +198,18 @@ export const updateYouTubeDatabase = async (youtubeObject: Awaited<ReturnType<ty
     }
 
 
-    catch (err) {
+    catch (err: any) {
+        if (err.code === 'validation_error') {
+            return {
+                status: 'error',
+                code: 'validation_error',
+                message: 'Watch status or reason missing'
+            }
+        }
+
         return {
-            status: 'error'
+            status: 'error',
+            code: err.code
         }
     }
 }
@@ -288,9 +297,18 @@ export const updateRedditDatabase = async (redditObject: RedditObject, userInput
         console.log(notionCreatePageResponse)
         throw new Error("Unable to create Notion page")
     }
-    catch (err) {
+    catch (err: any) {
+        if (err.code === 'validation_error') {
+            return {
+                status: 'error',
+                code: 'validation_error',
+                message: 'Read status or reason missing'
+            }
+        }
+
         return {
-            status: 'error'
+            status: 'error',
+            code: err.code
         }
     }
 }

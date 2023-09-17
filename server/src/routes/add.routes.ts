@@ -39,31 +39,55 @@ router.post('/notion', async (req: Request, res: Response) => {
     const { type, data, userInput }: AddToNotion = req.body;
     console.log({ type, data, userInput })
 
+    if (!userInput.reason && !userInput.status) {
+        return res.status(400).json({
+            message: 'No status or reason for saving given'
+        })
+    }
+
+    if (!userInput.reason) {
+        return res.status(400).json({
+            message: 'No reason for saving given'
+        })
+    }
+
+    if (!userInput.status) {
+        return res.status(400).json({
+            message: 'No status given'
+        })
+    }
+
     if (!type || !data) {
         return res.status(400).send("Missing request object")
     }
 
     if (type === 'youtube') {
-        const { status, url } = await updateYouTubeDatabase(data, userInput)
+        const { status, url, code, message } = await updateYouTubeDatabase(data, userInput)
 
         if (status === 'success') {
             return res.status(200).json({
                 url: url
             })
         } else {
-            return res.status(400).send("Error")
+            return res.status(400).json({
+                status,
+                message
+            })
         }
     }
 
     if (type === 'reddit') {
-        const { status, url } = await updateRedditDatabase(data, userInput)
+        const { status, url, code, message } = await updateRedditDatabase(data, userInput)
 
         if (status === 'success') {
             return res.status(200).json({
                 url: url
             })
         } else {
-            return res.status(400).send("Error")
+            return res.status(400).json({
+                status,
+                message
+            })
         }
     }
 })
