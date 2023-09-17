@@ -1,6 +1,9 @@
 import pkg from 'pg';
 const { Client } = pkg;
 
+/**
+ * Initialise the client used to communicate with the database
+ */
 const client = new Client({
     host: 'db',
     port: 5432,
@@ -11,6 +14,9 @@ const client = new Client({
 
 await client.connect();
 
+/**
+ * Get the current counter from the database
+ */
 export const getCurrentCounter = async () => {
     try {
         const tableExists = await doesTableExist();
@@ -26,12 +32,18 @@ export const getCurrentCounter = async () => {
     }
 }
 
+/**
+ * Check if table exists
+ */
 const doesTableExist = async () => {
     const result = await client.query('SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = $1)', ['counter'])
     const tableExists = result.rows[0].exists
     return tableExists;
 }
 
+/**
+ * Create table if table doesn't exist
+ */
 export const createTableIfNotExists = async () => {
 
     try {
@@ -51,6 +63,9 @@ export const createTableIfNotExists = async () => {
     }
 }
 
+/**
+ * Update counter
+ */
 export const updateCounter = async () => {
     try {
 
@@ -58,29 +73,30 @@ export const updateCounter = async () => {
         SELECT * FROM counter;
       `);
 
-        let currentCount;
+        let currentCount = 0;
 
-        if (existingEntry.rowCount > 0) {
+        if (existingEntry.rowCount > 0) { // increase count by 1 and return current count
             const res = await client.query(`
               UPDATE counter
               SET counter = counter + 1
               WHERE id = $1
               RETURNING counter;
             `, [existingEntry.rows[0].id]);
-            console.log('Entry updated successfully.');
             currentCount = res.rows[0].counter
-            console.log(currentCount)
+            return currentCount
         } else {
             const res = await client.query(`
           INSERT INTO counter (counter)
           VALUES (1);
         `);
-            console.log('Entry created successfully.');
         }
 
         return currentCount;
     }
     catch (err) {
-
+        console.log("Error updating counter")
+        return {
+            message: "Unable to update counter"
+        }
     }
 }

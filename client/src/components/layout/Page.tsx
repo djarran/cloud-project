@@ -1,15 +1,14 @@
-import { useQuery } from "@tanstack/react-query"
-import { Main } from "../Main"
+import { Main } from "./Main"
 import { Header } from "./Header"
-import { getCounter } from "../../helpers/postUrl"
 
+/**
+ * Renders the main page layout containing a header and main content.
+ */
 export const Page = () => {
-    const { data, refetch } = useQuery(['counter'], getCounter)
-
     return (
         <>
-            <Header data={data} />
-            <Main refetchCounter={refetch} />
+            <Header />
+            <Main />
         </>
     )
 }

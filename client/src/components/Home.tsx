@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from "react"
+import { type ChangeEvent } from "react"
 
 type HomeType = {
     url: string,
@@ -6,13 +6,11 @@ type HomeType = {
     handleSubmit: () => void,
 }
 
+/**
+ * Renders the "Home" component - the inital screen upon loading the website
+ * The URL input box
+ */
 const Home = ({ url, handleInputChange, handleSubmit }: HomeType) => {
-
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/counter`, {
-            method: 'POST',
-        })
-    }, [])
 
     return (
         <div className="flex flex-col gap-2">

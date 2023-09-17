@@ -1,5 +1,8 @@
 import 'dotenv/config'
-
+/**
+ * Get access token using username and password to use in subsequent requests to
+ * the Reddit API
+ */
 export async function getAccessToken() {
     const clientId = process.env.REDDIT_CLIENT_ID as string;
     const clientSecret = process.env.REDDIT_CLIENT_SECRET as string;
@@ -71,6 +74,9 @@ type GalleryImageType = {
     title: string, post_type: string, post_url: string, mediaArray: string[], subreddit: string
 }
 
+/**
+ * Process response from the Reddit API and return objects according to types
+ */
 export const processRedditPost = (redditPostData: any) => {
     let {
         title,
@@ -156,6 +162,9 @@ export const processRedditPost = (redditPostData: any) => {
     return { typeData: returnObject, postType: post_type };
 };
 
+/**
+ * Transform standard Reddit URL to Oauth for requests to the API
+ */
 const processRedditUrl = (url: string) => {
 
     const partialString = "https://oauth.reddit.com/r/"
@@ -168,6 +177,9 @@ const processRedditUrl = (url: string) => {
 
 }
 
+/**
+ * Request post data from the Reddit API
+ */
 export async function getRedditPostData(url: string) {
 
     const accessToken = await getAccessToken()

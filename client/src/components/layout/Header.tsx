@@ -1,7 +1,28 @@
+import { useMutation } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import { updateCounter } from "../../helpers/postUrl"
 
-export const Header = ({ data }: { data: any }) => {
+type UpdateCounterData = {
+    currentCount: number
+}
 
-    console.log(import.meta.env.VITE_TEST)
+/**
+ * Renders the header and manages updating and the state of the page view counter
+ */
+export const Header = () => {
+
+    const [pageCount, setPageCount] = useState<number>(0)
+
+    const { mutate } = useMutation(updateCounter, {
+        onSuccess: (data: UpdateCounterData) => {
+            setPageCount(data.currentCount)
+        },
+    })
+
+    useEffect(() => {
+        mutate()
+    }, [])
+
     return (
         <div className="flex items-center flex-row justify-between gap-4 border-b py-4 pl-4">
             <div className="flex flex-row gap-4">
@@ -14,7 +35,7 @@ export const Header = ({ data }: { data: any }) => {
                 </div>
             </div>
             <div className="pr-4">
-                {data && <div>{data.counter}</div>}
+                <div>{pageCount}</div>
             </div>
         </div>
     )

@@ -6,6 +6,9 @@ import { getRandomYouTubeVideo } from "../helpers/notion.helper.ts";
 
 const router = Router();
 
+/**
+ * Get current counter
+ */
 router.get('/', async (req: Request, res: Response) => {
     const currentCounter = await getCurrentCounter();
     // await createMessage('Hey');
@@ -17,10 +20,13 @@ router.get('/', async (req: Request, res: Response) => {
     })
 })
 
+/**
+ * Update counter
+ */
 router.post('/', async (req: Request, res: Response) => {
-    const currentCount = updateCounter();
-    res.json({
-        message: 'hey'
+    const currentCount = await updateCounter();
+    return res.status(200).json({
+        currentCount: currentCount
     })
 })
 

@@ -1,6 +1,9 @@
 import { youtubeCategories } from "../test/category.ts";
 import 'dotenv/config'
 
+/**
+ * Get YouTube Video metadata from the YouTube API
+ */
 export const getYouTubeVideoData = async (url: string) => {
     const id: string | undefined = url.split("=").pop();
 
@@ -40,6 +43,11 @@ export const getYouTubeVideoData = async (url: string) => {
     }
 };
 
+/**
+ * Get YouTube Video category from youtubeCategories object. Object obtained from
+ * a YouTube API. Since this API does not change (and requests to it for each content would
+ * be wasteful)
+ */
 const getYouTubeCategory = (id: string) => {
     const [damn] = youtubeCategories.items.filter(item => item.id === id)
     if (damn) {

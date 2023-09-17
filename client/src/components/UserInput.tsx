@@ -4,14 +4,17 @@ import toast from "react-hot-toast"
 import { YouTubeObject } from "./YouTube"
 import { RedditObject } from "../helpers/redditType"
 import { queryClient } from "../main"
-import { DataResponseType } from "./Main"
+import { DataResponseType } from "./layout/Main"
 
 type statusString = "watched" | "unwatched" | "read" | "unread" | ''
 export type UserInput = {
     status: statusString,
     reason: string
 }
-
+/**
+ * Renders the user input section beside the Reddit or YouTube components
+ * where users can enter the status and reason for saving the content
+ */
 export const UserInput = ({ response }: DataResponseType) => {
 
     const { data, type } = response
@@ -29,7 +32,7 @@ export const UserInput = ({ response }: DataResponseType) => {
 
     type MutationType = { userInput: UserInput, type: "reddit" | "youtube", data: YouTubeObject | RedditObject }
 
-    const { mutate, isSuccess } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: ({ userInput, type, data }: MutationType) => {
             const toastId = toast.loading("Creating Notion page...")
             return fetch(`${import.meta.env.VITE_API_URL}/add/notion`, {
@@ -40,7 +43,7 @@ export const UserInput = ({ response }: DataResponseType) => {
                 body: JSON.stringify({ userInput, type, data }),
             }).then(response => {
                 if (!response.ok) {
-                    const data = response.json().then(data => {
+                    response.json().then(data => {
                         toast.error(`Unable to add to Notion. ${data.message}.`, {
                             id: toastId
                         })
@@ -79,7 +82,6 @@ export const UserInput = ({ response }: DataResponseType) => {
             data
         })
     }
-    console.log(isSuccess)
 
     return (
         <div className="flex flex-col gap-4">
@@ -112,7 +114,7 @@ export const UserInput = ({ response }: DataResponseType) => {
             </div>
             <div className="flex flex-row gap-4">
                 <button className="p-3 bg-lime-500 text-white rounded-xl border" onClick={handleSubmit}>Add to Notion</button>
-                <button className="p-3 bg-red-500 text-white rounded-xl border">Cancel</button>
+                <button onClick={() => queryClient.resetQueries({ queryKey: ['url'], exact: false })} className="p-3 bg-red-500 text-white rounded-xl border">Cancel</button>
             </div>
         </div>
     )

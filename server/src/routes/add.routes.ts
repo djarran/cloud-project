@@ -8,10 +8,13 @@ import { createTableIfNotExists, updateCounter } from "../helpers/database.helpe
 
 const router = Router();
 
+/**
+ * Get content metadata and return to frontend
+ */
 router.get('/metadata', async (req: Request, res: Response) => {
     // TODO: PAGE COUNTER
     createTableIfNotExists();
-    const currentCount = updateCounter();
+    // const currentCount = updateCounter();
     const { url } = req.query;
     console.log(url)
     try {
@@ -34,6 +37,9 @@ type AwaitedYouTubeData = Awaited<YouTubeResponseObject>;
 
 type AddToNotion = { type: 'youtube', data: AwaitedYouTubeData, userInput: UserInput } | { type: 'reddit', data: RedditObject, userInput: UserInput }
 
+/**
+ * Post content metadata, watch/read status and reason for saving to Notion
+ */
 router.post('/notion', async (req: Request, res: Response) => {
     // console.log(req.body)
     const { type, data, userInput }: AddToNotion = req.body;
@@ -94,6 +100,9 @@ router.post('/notion', async (req: Request, res: Response) => {
 
 export type YouTubeResponseObject = ReturnType<typeof getYouTubeVideoData>
 
+/**
+ * Get metadata based on url type
+ */
 const getMetadata = async (url: string) => {
 
     if (url.includes('youtube')) {

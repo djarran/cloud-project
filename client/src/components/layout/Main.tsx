@@ -1,14 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
-import { getMetadata } from "../helpers/postUrl";
+import { getMetadata } from "../../helpers/postUrl";
 import toast from "react-hot-toast";
-import { YouTube, YouTubeObject } from "./YouTube";
-import { RedditObject } from "../helpers/redditType";
-import { Reddit } from "./Reddit";
-import { UserInput } from "./UserInput";
-import Home from "./Home";
+import { YouTube, YouTubeObject } from "../YouTube";
+import { RedditObject } from "../../helpers/redditType";
+import { Reddit } from "../Reddit";
+import { UserInput } from "../UserInput";
+import Home from "../Home";
 
-export const Main = ({ refetchCounter }: { refetchCounter: any }) => {
+/**
+ * Renders the main section under the header
+ */
+export const Main = () => {
 
     const [url, setUrl] = useState("");
 
@@ -27,7 +30,7 @@ export const Main = ({ refetchCounter }: { refetchCounter: any }) => {
     const handleSubmit = () => {
         if (url.includes('https://www.reddit.com') || url.includes('https://www.youtube.com')) {
             refetch()
-            refetchCounter()
+            // refetchCounter()
         } else {
             toast.error("Invalid URL")
         }
@@ -35,10 +38,10 @@ export const Main = ({ refetchCounter }: { refetchCounter: any }) => {
 
     return (
         <>
-            <div className="flex flex-col gap-4 w-full items-center mt-10">
+            <main className="flex flex-col gap-4 w-full items-center mt-10">
                 {!data && <Home url={url} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />}
                 {data ? <DataResponse response={data} /> : ''}
-            </div>
+            </main>
         </>
     );
 }
@@ -53,7 +56,11 @@ export type DataResponseType = {
     }
 }
 
-export const DataResponse = ({ response }: DataResponseType) => {
+/**
+ * Renders the data response conditonally based on whether it matches the YouTube or Reddit
+ * reponse object of DataResponseType
+ */
+const DataResponse = ({ response }: DataResponseType) => {
     const { type } = response
 
     return (

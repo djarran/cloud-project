@@ -18,6 +18,9 @@ type YouTubeComponentType = {
     }
 }
 
+/**
+ * Renders the YouTube metadata
+ */
 export const YouTube = ({ response }: YouTubeComponentType) => {
     const { data } = response
 

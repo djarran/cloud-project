@@ -6,36 +6,38 @@ type MetadataQueryObject = {
     queryKey: MetadataQueryKeyType
 }
 
+/**
+ * Get the metadata from the content URL
+ */
 export const getMetadata = async ({ queryKey }: MetadataQueryObject) => {
     const [_, url] = queryKey;
     const toastId = toast.loading("Requesting metadata...")
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/add/metadata?url=${url}`)
-    if (!response.ok) {
+    const getMetadataResponse = await fetch(`${import.meta.env.VITE_API_URL}/add/metadata?url=${url}`)
+
+    if (!getMetadataResponse.ok) { // If error response
         toast.error("Unable to process request", {
             id: toastId,
-            duration: 10000
         })
-        throw Error;
+        throw Error; // Throw error to be handled via React Query.
     };
+
     toast.success("Success", {
         id: toastId,
-        duration: 10000,
     })
-    const data = await response.json();
+
+    const data = await getMetadataResponse.json();
     return data
 }
 
-// type CounterQueryKeyType = ["counter", string]
 
-// type CounterQueryObject = {
-//     queryKey: CounterQueryKeyType
-// }
+/**
+ * Update the counter and return the new value of the counter
+ */
+export const updateCounter = async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/counter`, {
+        method: 'POST',
+    })
 
-export const getCounter = async () => {
-
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/counter`)
-    console.log(response)
-    const data = await response.json();
-
+    const data = await response.json()
     return data
 }

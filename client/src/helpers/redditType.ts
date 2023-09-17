@@ -1,4 +1,6 @@
-export type RedditTypeObject = TextType | CommentType | ExternalType | ImageType | GalleryImageType
+/**
+ * The following types define the different Reddit responses returned from the server
+ */
 
 export type RedditObject = {
     postType: 'text'
