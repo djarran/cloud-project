@@ -18,6 +18,8 @@
     "@types/node-cron": "^3.0.8",
     "@types/node-fetch": "^2.6.4",
     "@types/pg": "^8.10.2",
+    "aws-sdk": "^2.1469.0",
+    "axios": "^1.5.1",
     "cors": "^2.8.5",
     "cron": "^2.4.3",
     "dotenv": "^16.3.1",
@@ -26,6 +28,7 @@
     "node-fetch": "^3.3.2",
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
+    "redis": "^4.6.10",
     "ts-node": "^10.9.1",
     "youtube-transcript": "^1.0.6"
   },

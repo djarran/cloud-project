@@ -1,7 +1,6 @@
 version: "3.8"
 services:
   db:
-    platform: linux/amd64
     build:
       dockerfile: Dockerfile.postgres
       context: "./"
@@ -16,7 +15,6 @@ services:
     networks:
       - postgres
   api:
-    platform: linux/amd64
     env_file:
       - ./server/.env
     build:
@@ -25,6 +23,7 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
+      - ~/.aws:/root/.aws
     environment:
       - PGHOST=db
       - PGDATABASE=cloud
@@ -38,7 +37,6 @@ services:
     networks:
       - postgres
   react:
-    platform: linux/amd64
     build:
       dockerfile: Dockerfile.dev
       context: "./client"
@@ -50,6 +48,14 @@ services:
     stdin_open: true
     tty: true
     command: npm run dev
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - postgres
+
 networks:
   postgres:
     driver: bridge
